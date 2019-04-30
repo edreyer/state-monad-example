@@ -20,7 +20,7 @@ class AccountS extends StateM<Account, Integer> {
         );
     }
 
-    public static AccountS withdrawl(int amount) {
+    public static AccountS withdrawal(int amount) {
         return new AccountS(
             (Account a) -> new Tuple2<>(amount, new Account(a.getBalance() - amount))
         );
@@ -33,7 +33,7 @@ public class AccountExample {
         StateM<Account, Integer> program = For(
             AccountS.deposit(10),
             AccountS.deposit(100),
-            AccountS.withdrawl(50)).
+            AccountS.withdrawal(50)).
             yield((x, y, z) -> 0);
 
         Account newAccount = new Account(0);

@@ -1,6 +1,5 @@
 package functional.monad;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 import io.vavr.Tuple2;
@@ -15,7 +14,7 @@ public class StateM<S, A> {
         this.run = run;
     }
 
-    public static <S, A> StateM<S, A> unit(A a) {
+    public static <S, A> StateM<S, A> of(A a) {
         return new StateM<>(state -> new Tuple2<>(a, state));
     }
 
@@ -27,7 +26,7 @@ public class StateM<S, A> {
     }
 
     public <B> StateM<S, B> map(Function<A, B> f) {
-        return flatMap(a -> StateM.unit(f.apply(a)));
+        return flatMap(a -> StateM.of(f.apply(a)));
     }
 
     public static <S> StateM<S, S> get() {
