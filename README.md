@@ -1,1 +1,1 @@
-See the pitch at https://gitpitch.com/edreyer/state-monad-example
+See the slides at https://bit.ly/2USlKyt
