@@ -6,7 +6,7 @@ import io.vavr.Tuple2;
 
 public class StateM<S, A> {
 
-    public interface StateF<S,A> extends Function<S, Tuple2<A, S>> {};
+    public interface StateF<S,A> extends Function<S, Tuple2<A, S>> {}
 
     public final StateF<S,A> run;
 
@@ -49,8 +49,12 @@ public class StateM<S, A> {
         return new StateM<>(s -> new Tuple2<>(value, f.apply(s)));
     }
 
+    public Tuple2<A, S> apply(S s) {
+        return run.apply(s);
+    }
+
     public A eval(S s) {
-        return run.apply(s)._1;
+        return apply(s)._1;
     }
 
 
