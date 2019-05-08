@@ -53,6 +53,10 @@ public class StateM<S, A> {
         return run.apply(s);
     }
 
+    public S evalState(S s) {
+        return apply(s)._2;
+    }
+
     public A eval(S s) {
         return apply(s)._1;
     }

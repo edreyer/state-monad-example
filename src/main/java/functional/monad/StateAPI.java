@@ -1,12 +1,48 @@
 package functional.monad;
 
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import io.vavr.Function2;
 import io.vavr.Function3;
+import io.vavr.collection.Traversable;
+
+import static io.vavr.API.Seq;
 
 public class StateAPI {
+
+    public static class ForStateM<S, T> {
+
+        private final Traversable<StateM<S, T>> states;
+
+        ForStateM(StateM<S, T>... states) {
+            this.states = Seq(states);
+        }
+
+        /**
+         * Yields a result for elements of the cross product of the underlying StateM.
+         *
+         * @param f   a function that maps an element of the cross product to a result
+         * @return an {@code StateM} of mapped results
+         */
+        public StateM<S, T> yield(Function2<T, T, T> f) {
+            Objects.requireNonNull(f, "f is null");
+
+            switch (states.size()) {
+                case 0:
+                    throw new IllegalStateException("'states' cannot be empty");
+                case 1:
+                    return states.head();
+                default:
+                    return states.tail().foldLeft(states.head(),
+                        (acc, curr) -> acc.flatMap(a ->
+                            curr.map(c ->
+                                f.apply(a, c))
+                        )
+                    );
+            }
+        }
+    }
 
     public static class For1StateM<S1, T1> {
 
@@ -58,7 +94,7 @@ public class StateAPI {
          * @param <R> type of the resulting {@code Option} elements
          * @return an {@code Option} of mapped results
          */
-        public <R> StateM<S1, R> yield(BiFunction<? super T1, ? super T2, ? extends R> f) {
+        public <R> StateM<S1, R> yield(Function2<? super T1, ? super T2, ? extends R> f) {
             Objects.requireNonNull(f, "f is null");
             return ts1.flatMap(t1 ->
                 ts2.map(t2 -> f.apply(t1, t2)));
@@ -114,6 +150,12 @@ public class StateAPI {
         Objects.requireNonNull(ts3, "ts3 is null");
         return new StateAPI.For3StateM<>(ts1, ts2, ts3);
     }
+
+    public static <S, T> StateAPI.ForStateM<S, T> For(StateM<S, T> ...states) {
+        Objects.requireNonNull(states, "ts1 is null");
+        return new StateAPI.ForStateM<>(states);
+    }
+
 
 
 }

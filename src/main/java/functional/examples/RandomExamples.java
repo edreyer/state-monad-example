@@ -59,6 +59,9 @@ public class RandomExamples {
     public static class Generator3 {
         // Fully abstracted into StateM<S, A>
         public static RandomS<Integer> nextInt = RandomS.intRnd;
+
+        public static StateM<Seed, Boolean> nextBoolean = nextInt
+            .map(i -> Boolean.valueOf(i % 2 == 0));
     }
 
 }

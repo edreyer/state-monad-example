@@ -33,13 +33,17 @@ public class AccountExample {
         StateM<Account, Integer> program = For(
             AccountS.deposit(10),
             AccountS.deposit(100),
-            AccountS.withdrawal(50)).
-            yield((x, y, z) -> 0);
+            AccountS.withdrawal(20),
+            AccountS.withdrawal(20)).
+            yield((x, y) -> 0);
 
         Account newAccount = new Account(0);
 
         System.out.println(
             "The balance is: " + program.run.apply(newAccount)._2.getBalance()
+        );
+        System.out.println(
+            "The balance is: " + program.evalState(newAccount).getBalance()
         );
 
         // ---------------------------------
