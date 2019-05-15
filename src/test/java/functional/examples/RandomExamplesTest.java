@@ -67,7 +67,7 @@ public class RandomExamplesTest {
         assertEquals(Integer.valueOf(-131000125), Generator3.nextInt.eval(t2.state));
         assertEquals(Integer.valueOf(-131000125), Generator3.nextInt.eval(t2.state));
 
-        assertEquals(Boolean.FALSE, Generator3.nextBoolean.eval(t2.state));
+        assertEquals(Boolean.FALSE, Generator3.nextBool.eval(t2.state));
 
     }
 
@@ -84,7 +84,7 @@ public class RandomExamplesTest {
         // Just want the random, forget the updated state
         Integer rand = RandomS.intRnd.eval(r2.state);
 
-        //Boolean bool = RandomS.nextBool.eval(r2._2);
+        Boolean bool = RandomS.boolRnd.eval(r2.state);
 
     }
 

@@ -48,20 +48,22 @@ public class RandomExamples {
 
     public static class RandomS<A> extends StateM<Seed, A> {
 
+        public static StateF<Seed, Integer> nextInt = RandomExamples::nextInt;
+
         private RandomS(StateF<Seed, A> run) {
             super(run);
         }
 
-        public static RandomS<Integer> intRnd = new RandomS<>(RandomExamples::nextInt);
-
+        public static RandomS<Integer> intRnd = new RandomS<>(nextInt);
+        public static RandomS<Boolean> boolRnd = new RandomS<>(nextInt.map(i -> i % 2 == 0));
     }
 
     public static class Generator3 {
         // Fully abstracted into StateM<S, A>
         public static RandomS<Integer> nextInt = RandomS.intRnd;
 
-        public static StateM<Seed, Boolean> nextBoolean = nextInt
-            .map(i -> Boolean.valueOf(i % 2 == 0));
+        public static RandomS<Boolean> nextBool = RandomS.boolRnd;
+
     }
 
 }

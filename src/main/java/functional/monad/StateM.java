@@ -4,7 +4,13 @@ import java.util.function.Function;
 
 public class StateM<S, A> {
 
-    public interface StateF<S,A> extends Function<S, StateTuple<A, S>> {}
+    public interface StateF<S,A> extends Function<S, StateTuple<A, S>> {
+
+        default <B> StateF<S, B> map(Function<A, B> f) {
+            return (state) ->  new StateTuple<>(f.apply(apply(state).value), state);
+        }
+
+    }
 
     public final StateF<S,A> run;
 
