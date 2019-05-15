@@ -2,11 +2,9 @@ package functional.monad;
 
 import java.util.function.Function;
 
-import io.vavr.Tuple2;
-
 public class StateM<S, A> {
 
-    public interface StateF<S,A> extends Function<S, Tuple2<A, S>> {}
+    public interface StateF<S,A> extends Function<S, StateTuple<A, S>> {}
 
     public final StateF<S,A> run;
 
@@ -15,13 +13,13 @@ public class StateM<S, A> {
     }
 
     public static <S, A> StateM<S, A> of(A a) {
-        return new StateM<>(state -> new Tuple2<>(a, state));
+        return new StateM<>(state -> new StateTuple<>(a, state));
     }
 
     public <B> StateM<S, B> flatMap(Function<A, StateM<S, B>> f) {
         return new StateM<>(s -> {
-            Tuple2<A, S> temp = run.apply(s);
-            return f.apply(temp._1).run.apply(temp._2);
+            StateTuple<A, S> temp = run.apply(s);
+            return f.apply(temp.value).run.apply(temp.state);
         });
     }
 
@@ -30,35 +28,35 @@ public class StateM<S, A> {
     }
 
     public static <S> StateM<S, S> get() {
-        return new StateM<>(s -> new Tuple2<>(s, s));
+        return new StateM<>(s -> new StateTuple<>(s, s));
     }
 
     public static <S> StateM<S, Nothing> set(S s) {
-        return new StateM<>(it -> new Tuple2<>(Nothing.INSTANCE, s));
+        return new StateM<>(it -> new StateTuple<>(Nothing.INSTANCE, s));
     }
 
     public static <S, A> StateM<S, A> getState(Function<S, A> f) {
-        return new StateM<>(s -> new Tuple2<>(f.apply(s), s));
+        return new StateM<>(s -> new StateTuple<>(f.apply(s), s));
     }
 
     public static <S> StateM<S, Nothing> transition(Function<S, S> f) {
-        return new StateM<>(s -> new Tuple2<>(Nothing.INSTANCE, f.apply(s)));
+        return new StateM<>(s -> new StateTuple<>(Nothing.INSTANCE, f.apply(s)));
     }
 
     public static <S, A> StateM<S, A> transition(Function<S, S> f, A value) {
-        return new StateM<>(s -> new Tuple2<>(value, f.apply(s)));
+        return new StateM<>(s -> new StateTuple<>(value, f.apply(s)));
     }
 
-    public Tuple2<A, S> apply(S s) {
+    public StateTuple<A, S> apply(S s) {
         return run.apply(s);
     }
 
     public S evalState(S s) {
-        return apply(s)._2;
+        return apply(s).state;
     }
 
     public A eval(S s) {
-        return apply(s)._1;
+        return apply(s).value;
     }
 
 

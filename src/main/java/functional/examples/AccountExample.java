@@ -1,6 +1,7 @@
 package functional.examples;
 
 import functional.monad.StateM;
+import functional.monad.StateTuple;
 import io.vavr.Tuple2;
 import lombok.Value;
 
@@ -16,13 +17,13 @@ class AccountS extends StateM<Account, Integer> {
 
     public static AccountS deposit(int amount) {
         return new AccountS(
-            (Account a) -> new Tuple2<>(amount, new Account(a.getBalance() + amount))
+            (Account a) -> new StateTuple<>(amount, new Account(a.getBalance() + amount))
         );
     }
 
     public static AccountS withdrawal(int amount) {
         return new AccountS(
-            (Account a) -> new Tuple2<>(amount, new Account(a.getBalance() - amount))
+            (Account a) -> new StateTuple<>(amount, new Account(a.getBalance() - amount))
         );
     }
 }
@@ -40,7 +41,7 @@ public class AccountExample {
         Account newAccount = new Account(0);
 
         System.out.println(
-            "The balance is: " + program.run.apply(newAccount)._2.getBalance()
+            "The balance is: " + program.run.apply(newAccount).state.getBalance()
         );
         System.out.println(
             "The balance is: " + program.evalState(newAccount).getBalance()

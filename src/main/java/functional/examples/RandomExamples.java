@@ -1,11 +1,11 @@
 package functional.examples;
 
+import functional.monad.StateM;
+import functional.monad.StateTuple;
+import lombok.Value;
+
 import java.util.Random;
 import java.util.function.Function;
-
-import functional.monad.StateM;
-import io.vavr.Tuple2;
-import lombok.Value;
 
 public class RandomExamples {
 
@@ -14,10 +14,10 @@ public class RandomExamples {
         private int seed;
     }
 
-    private static Tuple2<Integer, Seed> nextInt(Seed seed) {
+    private static StateTuple<Integer, Seed> nextInt(Seed seed) {
         Random r = seed == null ? new Random() : new Random(seed.getSeed());
         int i = r.nextInt();
-        return new Tuple2<>(i, new Seed(i));
+        return new StateTuple<>(i, new Seed(i));
     }
 
     /*
@@ -26,7 +26,7 @@ public class RandomExamples {
 
     public static class Generator1 {
         // Concrete API
-        public static Tuple2<Integer, Seed> nextInt(Seed seed) {
+        public static StateTuple<Integer, Seed> nextInt(Seed seed) {
             return RandomExamples.nextInt(seed);
         }
     }
@@ -35,7 +35,7 @@ public class RandomExamples {
      * First evolution.  Generalizes the static method `Generator1.nextInt(RNG)` into a Function.
      */
 
-    public interface RandomF<A> extends Function<Seed, Tuple2<A, Seed>> {}
+    public interface RandomF<A> extends Function<Seed, StateTuple<A, Seed>> {}
 
     public static class Generator2 {
         // Slightly abstracted into Function<T,R>
