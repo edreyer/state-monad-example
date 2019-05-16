@@ -19,6 +19,21 @@ public class StateAPI {
             this.states = Seq(states);
         }
 
+        public StateM<S, Nothing> yield() {
+            switch (states.size()) {
+                case 0:
+                    throw new IllegalStateException("'states' cannot be empty");
+                case 1:
+                    return states.head().map(it -> Nothing.INSTANCE);
+                default:
+                    return states.tail().foldLeft(states.head().map(it -> Nothing.INSTANCE),
+                        (acc, curr) -> acc.flatMap(a ->
+                            curr.map(c -> Nothing.INSTANCE)
+                        )
+                    );
+            }
+        }
+
         /**
          * Yields a result for elements of the cross product of the underlying StateM.
          *

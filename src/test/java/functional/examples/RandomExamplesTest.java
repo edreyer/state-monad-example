@@ -54,9 +54,9 @@ public class RandomExamplesTest {
         Seed seed = new Seed(0);
 
         // get next tuple
-        StateTuple<Integer, Seed> t1 = Generator3.nextInt.run.apply(seed);
-        StateTuple<Integer, Seed> t2 = Generator3.nextInt.run.apply(t1.state);
-        StateTuple<Integer, Seed> t3 = Generator3.nextInt.run.apply(t2.state);
+        StateTuple<Integer, Seed> t1 = Generator3.nextInt.apply(seed);
+        StateTuple<Integer, Seed> t2 = Generator3.nextInt.apply(t1.state);
+        StateTuple<Integer, Seed> t3 = Generator3.nextInt.apply(t2.state);
 
         assertEquals(Integer.valueOf(-1155484576), t1.value);
         assertEquals(Integer.valueOf(-1764305998), t2.value);
@@ -83,8 +83,10 @@ public class RandomExamplesTest {
 
         // Just want the random, forget the updated state
         Integer rand = RandomS.intRnd.eval(r2.state);
+        assertEquals(Integer.valueOf(-131000125), rand);
 
         Boolean bool = RandomS.boolRnd.eval(r2.state);
+        assertEquals(Boolean.FALSE, bool);
 
     }
 

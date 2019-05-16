@@ -54,8 +54,17 @@ public class RandomExamples {
             super(run);
         }
 
+        @Override public <B> RandomS<B> map(Function<A, B> f) {
+            return new RandomS<>(this.run.map(f));
+        }
+
         public static RandomS<Integer> intRnd = new RandomS<>(nextInt);
+
+        // create a random Boolean state monad, by mapping the original random int function
         public static RandomS<Boolean> boolRnd = new RandomS<>(nextInt.map(i -> i % 2 == 0));
+
+        // another way to create a random boolean state monad
+        public static RandomS<Boolean> boolRnd2 = intRnd.map(i -> i % 2 == 0);
     }
 
     public static class Generator3 {
