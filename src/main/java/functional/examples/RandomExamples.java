@@ -2,10 +2,11 @@ package functional.examples;
 
 import functional.monad.StateM;
 import functional.monad.StateTuple;
+import io.vavr.Function1;
 import lombok.Value;
 
 import java.util.Random;
-import java.util.function.Function;
+
 
 public class RandomExamples {
 
@@ -35,7 +36,7 @@ public class RandomExamples {
      * First evolution.  Generalizes the static method `Generator1.nextInt(RNG)` into a Function.
      */
 
-    public interface RandomF<A> extends Function<Seed, StateTuple<A, Seed>> {}
+    public interface RandomF<A> extends Function1<Seed, StateTuple<A, Seed>> {}
 
     public static class Generator2 {
         // Slightly abstracted into Function<T,R>
@@ -54,7 +55,7 @@ public class RandomExamples {
             super(run);
         }
 
-        @Override public <B> RandomS<B> map(Function<A, B> f) {
+        @Override public <B> RandomS<B> map(Function1<A, B> f) {
             return new RandomS<>(this.run.map(f));
         }
 

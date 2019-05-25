@@ -1,7 +1,7 @@
 package functional.state;
 
-import functional.monad.StateTuple;
-
 import java.util.function.Predicate;
 
-public interface Condition<I, S> extends Predicate<StateTuple<I, S>> {}
+import io.vavr.Tuple2;
+
+public interface Condition<I extends Input, S> extends Predicate<Tuple2<I, S>> {}

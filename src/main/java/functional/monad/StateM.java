@@ -2,11 +2,14 @@ package functional.monad;
 
 import java.util.function.Function;
 
+import io.vavr.Function1;
+import io.vavr.collection.List;
+
 public class StateM<S, A> {
 
-    public interface StateF<S,A> extends Function<S, StateTuple<A, S>> {
+    public interface StateF<S,A> extends Function1<S, StateTuple<A, S>> {
 
-        default <B> StateF<S, B> map(Function<A, B> f) {
+        default <B> StateF<S, B> map(Function1<A, B> f) {
             return (state) ->  new StateTuple<>(f.apply(apply(state).value), state);
         }
 
@@ -22,15 +25,19 @@ public class StateM<S, A> {
         return new StateM<>(state -> new StateTuple<>(a, state));
     }
 
-    public <B> StateM<S, B> flatMap(Function<A, StateM<S, B>> f) {
+    public <B> StateM<S, B> flatMap(Function1<A, StateM<S, B>> f) {
         return new StateM<>(s -> {
             StateTuple<A, S> temp = run.apply(s);
             return f.apply(temp.value).run.apply(temp.state);
         });
     }
 
-    public <B> StateM<S, B> map(Function<A, B> f) {
+    public <B> StateM<S, B> map(Function1<A, B> f) {
         return flatMap(a -> StateM.of(f.apply(a)));
+    }
+
+    public <B, C> StateM<S, C> map2(StateM<S, B> sb, Function<A, Function<B, C>> f) {
+        return flatMap(a -> sb.map(b -> f.apply(a).apply(b)));
     }
 
     public static <S> StateM<S, S> get() {
@@ -41,17 +48,25 @@ public class StateM<S, A> {
         return new StateM<>(it -> new StateTuple<>(Nothing.INSTANCE, s));
     }
 
-    public static <S, A> StateM<S, A> getState(Function<S, A> f) {
+    public static <S, A> StateM<S, A> getState(Function1<S, A> f) {
         return new StateM<>(s -> new StateTuple<>(f.apply(s), s));
     }
 
-    public static <S> StateM<S, Nothing> transition(Function<S, S> f) {
-        return new StateM<>(s -> new StateTuple<>(Nothing.INSTANCE, f.apply(s)));
+    public static <S> StateM<S, Nothing> transition(Function1<S, S> f) {
+        return StateM.transition(f, Nothing.INSTANCE);
     }
 
-    public static <S, A> StateM<S, A> transition(Function<S, S> f, A value) {
+    public static <S, A> StateM<S, A> transition(Function1<S, S> f, A value) {
         return new StateM<>(s -> new StateTuple<>(value, f.apply(s)));
     }
+
+    public static <S, A> StateM<S, List<A>> compose(List<StateM<S, A>> fs) {
+        return fs.foldRight(
+            StateM.of(List.empty()),
+            (curr, acc) -> acc.map2(curr, a -> c -> a.prepend(c))
+        );
+    }
+
 
     public StateTuple<A, S> apply(S s) {
         return run.apply(s);

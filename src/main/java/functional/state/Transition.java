@@ -1,7 +1,6 @@
 package functional.state;
 
-import functional.monad.StateTuple;
+import io.vavr.Function1;
+import io.vavr.Tuple2;
 
-import java.util.function.Function;
-
-public interface Transition<I, S> extends Function<StateTuple<I, S>, S> {}
+public interface Transition<I extends Input, S> extends Function1<Tuple2<I, S>, S> {}

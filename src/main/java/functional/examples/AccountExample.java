@@ -38,9 +38,14 @@ public class AccountExample {
         StateM<Account, Nothing> program = For(
             AccountS.deposit(10),
             AccountS.deposit(100),
+            AccountS.deposit(100),
+            AccountS.deposit(100),
+            AccountS.deposit(100),
+            AccountS.deposit(100),
+            AccountS.deposit(100),
             AccountS.withdrawal(20),
-            AccountS.withdrawal(20)).
-            yield();
+            AccountS.withdrawal(20)
+        ).yield();
 
         Account newAccount = new Account(0);
 

@@ -1,8 +1,8 @@
 package functional.monad;
 
 import java.util.Objects;
-import java.util.function.Function;
 
+import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Function3;
 import io.vavr.collection.Traversable;
@@ -74,7 +74,7 @@ public class StateAPI {
          * @param <R> type of the resulting {@code StateM} elements
          * @return an {@code StateM} of mapped results
          */
-        public <R> StateM<S1, R> yield(Function<T1, R> f) {
+        public <R> StateM<S1, R> yield(Function1<T1, R> f) {
             Objects.requireNonNull(f, "f is null");
             return ts1.map(f);
         }
@@ -85,7 +85,7 @@ public class StateAPI {
          * @return an {@code Iterator} of mapped results
          */
         public StateM<S1, T1> yield() {
-            return yield(Function.identity());
+            return yield(Function1.identity());
         }
     }
 
@@ -112,7 +112,7 @@ public class StateAPI {
         public <R> StateM<S1, R> yield(Function2<? super T1, ? super T2, ? extends R> f) {
             Objects.requireNonNull(f, "f is null");
             return ts1.flatMap(t1 ->
-                ts2.map(t2 -> f.apply(t1, t2)));
+                       ts2.map(t2 -> f.apply(t1, t2)));
         }
 
     }
@@ -142,8 +142,8 @@ public class StateAPI {
         public <R> StateM<S1, R> yield(Function3<? super T1, ? super T2, ? super T3, ? extends R> f) {
             Objects.requireNonNull(f, "f is null");
             return ts1.flatMap(t1 ->
-                ts2.flatMap(t2 ->
-                    ts3.map(t3 -> f.apply(t1, t2, t3))));
+                   ts2.flatMap(t2 ->
+                       ts3.map(t3 -> f.apply(t1, t2, t3))));
         }
 
     }
