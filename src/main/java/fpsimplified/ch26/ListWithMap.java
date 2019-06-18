@@ -42,6 +42,7 @@ public class ListWithMap<A> extends LinkedList<A> {
     public <B> ListWithMap<B> flatMap(Function<? super A, ? extends ListWithMap<? extends B>> f) {
         ListWithMap<B> result = new ListWithMap<>();
         for (A a : this) {
+            // because f.apply(a) returns a 'List' type, we need another 'for' loop
             for (B b : f.apply(a)) {
                 result.add(b);
             }
