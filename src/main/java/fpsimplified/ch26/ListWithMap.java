@@ -2,7 +2,6 @@ package fpsimplified.ch26;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -22,10 +21,10 @@ public class ListWithMap<A> extends LinkedList<A> {
         return result;
     }
 
-    public <B> ListWithMap<B> map(Function<? super A, ? extends B> f) {
+    public <B> ListWithMap<B> map(Function<? super A, ? extends B> a2b) {
         ListWithMap<B> result = new ListWithMap<>();
         for (A a : this) {
-            result.add(f.apply(a));
+            result.add(a2b.apply(a));
         }
         return result;
     }
@@ -40,11 +39,11 @@ public class ListWithMap<A> extends LinkedList<A> {
         return result;
     }
 
-    public <B> ListWithMap<B> flatMap(Function<? super A, ? extends ListWithMap<? extends B>> f) {
+    public <B> ListWithMap<B> flatMap(Function<? super A, ? extends ListWithMap<? extends B>> a2bs) {
         ListWithMap<B> result = new ListWithMap<>();
         for (A a : this) {
             // because f.apply(a) returns a 'List' type, we need another 'for' loop
-            for (B b : f.apply(a)) {
+            for (B b : a2bs.apply(a)) {
                 result.add(b);
             }
         }
@@ -54,7 +53,7 @@ public class ListWithMap<A> extends LinkedList<A> {
     public static void main(String[] args) {
         example1();
         example2();
-        example3();
+        //example3();
     }
 
     public static void example1() {
@@ -107,28 +106,27 @@ public class ListWithMap<A> extends LinkedList<A> {
         // calling map multiple times.
         // Once for each transformation
 
-        Optional.ofNullable(listing).
-            map(InventoryListing::getMainPictureDefinition).
-            map(def -> pictureHelper.getScaledPicture(def, SIZE_152x114)).
-            map(ListingMetadataPicture::getUrl);
-
-        // Assign mapping operations to functions so we can compose them
-
-        Function<InventoryListing, ListingMetadataPictureDefinition> l2mpd =
-            InventoryListing::getMainPictureDefinition;
-
-        Function<ListingMetadataPictureDefinition, ListingMetadataPicture> mpd2lmp =
-            def -> pictureHelper.getScaledPicture(def, SIZE_152x114);
-
-        Function<ListingMetadataPicture, String> lmp2url = ListingMetadataPicture::getUrl;
-
-        // compose operations
-
-        Function<InventoryListing, String> l2picUrl = l2mpd.andThen(mpd2lmp).andThen(lmp2url);
-
-        Optional.ofNullable(listing).map(l -> l2picUrl(l));
-
-
+//        Optional<String> url = Optional.ofNullable(listing).
+//            map(InventoryListing::getMainPictureDefinition).
+//            map(def -> pictureHelper.getScaledPicture(def, SIZE_152x114)).
+//            map(ListingMetadataPicture::getUrl);
+//
+//        // Assign mapping operations to functions so we can compose them
+//
+//        Function<InventoryListing, ListingMetadataPictureDefinition> l2mpd =
+//            InventoryListing::getMainPictureDefinition;
+//
+//        Function<ListingMetadataPictureDefinition, ListingMetadataPicture> mpd2lmp =
+//            def -> pictureHelper.getScaledPicture(def, SIZE_152x114);
+//
+//        Function<ListingMetadataPicture, String> lmp2url = ListingMetadataPicture::getUrl;
+//
+//        // compose operations
+//
+//        Function<InventoryListing, String> l2picUrl = l2mpd.andThen(mpd2lmp).andThen(lmp2url);
+//
+//        Optional<String> url2 = Optional.ofNullable(listing)
+//            .map(l -> l2picUrl(l));
 
     }
 
