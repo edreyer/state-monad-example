@@ -4,33 +4,35 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class ListWithMap<A> extends LinkedList<A> {
+public class FuncList<A> extends LinkedList<A> {
 
-    public static <A> ListWithMap<A> of(A a) {
-        ListWithMap<A> result = new ListWithMap<>();
+    public static <A> FuncList<A> of(A a) {
+        FuncList<A> result = new FuncList<>();
         result.add(a);
         return result;
     }
 
-    public static <A> ListWithMap<A> of(A... as) {
-        ListWithMap<A> result = new ListWithMap<>();
+    public static <A> FuncList<A> of(A... as) {
+        FuncList<A> result = new FuncList<>();
         for (A a : as) {
             result.add(a);
         }
         return result;
     }
 
-    public <B> ListWithMap<B> map(Function<? super A, ? extends B> a2b) {
-        ListWithMap<B> result = new ListWithMap<>();
+    public <B> FuncList<B> map(Function<? super A, ? extends B> a2b) {
+        FuncList<B> result = new FuncList<>();
         for (A a : this) {
             result.add(a2b.apply(a));
         }
         return result;
     }
 
-    public ListWithMap<A> filter(Predicate<? super A> p) {
-        ListWithMap<A> result = new ListWithMap<>();
+    public FuncList<A> filter(Predicate<? super A> p) {
+        FuncList<A> result = new FuncList<>();
         for (A a : this) {
             if (p.test(a)) {
                 result.add(a);
@@ -39,8 +41,8 @@ public class ListWithMap<A> extends LinkedList<A> {
         return result;
     }
 
-    public <B> ListWithMap<B> flatMap(Function<? super A, ? extends ListWithMap<? extends B>> a2bs) {
-        ListWithMap<B> result = new ListWithMap<>();
+    public <B> FuncList<B> flatMap(Function<? super A, ? extends FuncList<? extends B>> a2bs) {
+        FuncList<B> result = new FuncList<>();
         for (A a : this) {
             // because f.apply(a) returns a 'List' type, we need another 'for' loop
             for (B b : a2bs.apply(a)) {
@@ -54,16 +56,18 @@ public class ListWithMap<A> extends LinkedList<A> {
         example1();
         example2();
         //example3();
+
+        List<Integer> ints = IntStream.range(0, 100).boxed().collect(Collectors.toList());
     }
 
     public static void example1() {
-        ListWithMap<String> input = ListWithMap.of("1", "2", "3", "4", "5", "6");
+        FuncList<String> input = FuncList.of("1", "2", "3", "4", "5", "6");
 
         List<Integer> output = input
             .map(Integer::parseInt)
             .filter(n -> n % 2 == 0)
             .flatMap(n -> {
-                ListWithMap<Integer> xs = new ListWithMap<>();
+                FuncList<Integer> xs = new FuncList<>();
                 xs.add(n * 2);
                 xs.add(n * n);
                 return xs;
@@ -74,13 +78,13 @@ public class ListWithMap<A> extends LinkedList<A> {
 
     public static void example2() {
         // mapping with function composition
-        ListWithMap<Integer> prices = ListWithMap.of(10, 20, 30, 40, 50);
+        FuncList<Integer> prices = FuncList.of(10, 20, 30, 40, 50);
 
         Function<Integer, Double> addTax = p -> p + p * 0.05;
         Function<Double, Double> addShipping = p -> p + 9.95;
 
         // map twice
-        ListWithMap<Double> result1 = prices
+        FuncList<Double> result1 = prices
             .map(addTax)
             .map(addShipping);
 
@@ -89,7 +93,7 @@ public class ListWithMap<A> extends LinkedList<A> {
         Function<Integer, Double> addTaxAndShipping2 = addShipping.compose(addTax);
 
         // map once by combining functions with function composition
-        ListWithMap<Double> result2 = prices.map(addTaxAndShipping);
+        FuncList<Double> result2 = prices.map(addTaxAndShipping);
 
         System.out.print("Result 1: ");
         result1.forEach(p -> System.out.print(p));
