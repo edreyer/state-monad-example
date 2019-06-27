@@ -23,6 +23,13 @@ public class Ch27 {
 
     }
 
+// Expand for live coding exercise
+
+    //    public static ??? curried(BiFunction<T, U, R> func) {
+    //        ???
+    //    }
+
+
     public static void demoVavrCurry() {
 
         Function2<Integer, Integer, Integer> sum = (a, b) -> a + b;
@@ -43,10 +50,16 @@ public class Ch27 {
 
     public static void demoPartial() {
 
-        var wrapWithDiv = Ch27Solutions.wrapWithDiv(Ch27::wrap);
+        var wrapWithDiv = wrapWithDiv(Ch27::wrap);
 
         out.println(wrapWithDiv.apply("<img src=\"foo.jpg\">"));
     }
+
+// Expand for live coding exercise
+
+    //    public static ??? myWrapWithDiv(Function3<String, String, String, String> func) {
+//        ???
+//    }
 
     public static void main(String[] args) {
         demoCurry();

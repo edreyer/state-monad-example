@@ -1,6 +1,6 @@
-package fpsimplified.ch25
+package fpsimplified.ch26
 
-import fpsimplified.ch25.Ch26Solutions.whilst
+import fpsimplified.ch26.Ch26Solutions.whilst
 
 object Ch26 {
 
@@ -14,13 +14,17 @@ object Ch26 {
 
 
     // Normal 2 arg function
-    println( sum(5, 10) )
+    println {
+      sum(5, 10)
+    }
 
 
 
 
     // Calling sum2 with two argument lists
-    println( sum2(5)(10) )
+    println {
+      sum2(5)(10)
+    }
 
 
 
@@ -35,9 +39,11 @@ object Ch26 {
 
 
     // You can make 2nd arg look like a method body
-    println( sum2(5) {
-      10
-    })
+    println {
+      sum2(5) {
+        10
+      }
+    }
     println
 
 

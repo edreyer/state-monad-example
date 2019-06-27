@@ -1,4 +1,4 @@
-package fpsimplified.ch25
+package fpsimplified.ch26
 
 object Ch26Solutions {
 
