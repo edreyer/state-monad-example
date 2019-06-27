@@ -1,4 +1,4 @@
-package fpsimplified.ch26;
+package fpsimplified.ch24;
 
 import java.util.LinkedList;
 import java.util.List;
