@@ -2,6 +2,7 @@ package functional.monad;
 
 import java.util.function.Function;
 
+import cyclops.control.State;
 import io.vavr.Function1;
 import io.vavr.collection.List;
 
@@ -25,8 +26,12 @@ public class StateM<S, A> {
         return new StateM<>(state -> new StateTuple<>(a, state));
     }
 
+    public static <S, A> StateM<S, A> of(StateF<S,A> run) {
+        return new StateM<>(run);
+    }
+
     public <B> StateM<S, B> flatMap(Function1<A, StateM<S, B>> f) {
-        return new StateM<>(s -> {
+        return StateM.of(s -> {
             StateTuple<A, S> temp = run.apply(s);
             return f.apply(temp.value).run.apply(temp.state);
         });
