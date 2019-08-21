@@ -69,8 +69,6 @@ public class StateExercise {
 
         }
 
-        // function form: S -> (S', A)
-        // Function1<Seed, StateTuple<Seed, Boolean>>
         public interface StateF<S, A> extends Function1<S, StateTuple<S, A>> {}
 
         public interface RandomF<A> extends StateF<Seed, A> {}
@@ -95,34 +93,60 @@ public class StateExercise {
         }
     }
 
+    // function form: State -> (State', Value)
+    // Function1<Seed, StateTuple<Seed, Boolean>>
 
-    public interface StateF<S, A> extends Function1<S, StateTuple<S, A>> {}
+    public interface StateF<State, Value> extends Function1<State, StateTuple<State, Value>> {}
 
-    public static class StateM<S, A> {
+    public static class StateM<State, Value> {
 
-        private StateF<S, A> op;
+        private StateF<State, Value> op;
 
-        public static <S, A> StateM<S, A> of(StateF<S, A> op) {
+        private StateM(StateF<State, Value> op) {
+            this.op = op;
+        }
+
+        public static <State, Value> StateM<State, Value> of(StateF<State, Value> op) {
+            /*
+            return new StateM(op);
+             */
             // TODO
             return null;
         }
 
-        public static <S, A> StateM<S, A> of(A a) {
+        public static <State, Value> StateM<State, Value> of(Value a) {
+            /*
+            return new StateM(state -> new StateTuple(state, a));
+             */
             // TODO
             return null;
         }
 
-        public A eval(S s) {
-            // given the state, return a value
-            return null;
-        }
-
-        public <B> StateM<S, B> flatMap(Function1<A, StateM<S, B>> f) {
+        public Value eval(State s) {
+            /*
+            return op.apply(s).value;
+             */
             // TODO
             return null;
         }
 
-        public <B> StateM<S, B> map(Function1<A, B> f) {
+        public <B> StateM<State, B> flatMap(Function1<Value, StateM<State, B>> f) {
+            /*
+            return StateM.of((State state) -> {
+                StateTuple<State, Value> tempTuple = op.apply(state);
+                StateM<State, B> tempStateM = f.apply(tempTuple.value);
+                StateTuple<State, B> result = tempStateM.op.apply(tempTuple.state);
+                return result;
+            });
+             */
+            // TODO
+            return null;
+        }
+
+        public <B> StateM<State, B> map(Function1<Value, B> f) {
+            /*
+            return flatMap(value -> StateM.of(f.apply(value)));
+             */
             // TODO: define in terms of flatMap
             return null;
         }
@@ -150,6 +174,7 @@ public class StateExercise {
                 rndInt.map(z -> new Point(x, y, z))));
 
         Point point = pointS.eval(new Seed(0));
+        System.out.println(point);
 
     }
 
