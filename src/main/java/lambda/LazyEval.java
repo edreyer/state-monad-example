@@ -34,7 +34,11 @@ public class LazyEval {
         List<LocalDate> whatWeWant = lotsOfDays.subList(0, 10); // chucked most of the computed days
     }
 
-    // Lazy.  Nothing is materialized until we actuall call terminating function
+    /////////////////////////////
+    // Now with lazy eval
+    /////////////////////////////
+
+    // Lazy.  Nothing is materialized until we actually call terminating function
     public static Iterable<LocalDate> daysBetween2(LocalDate start, LocalDate end) {
         return takeWhile(lt(end), iterate(current -> current.plusDays(1), start));
     }

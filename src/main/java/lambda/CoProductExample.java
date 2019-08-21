@@ -20,6 +20,7 @@ public class CoProductExample {
                 throw new IllegalArgumentException("only strings and ints allowed");
             }
             // do something with value
+            System.out.println(value);
         }
     }
 
@@ -29,7 +30,9 @@ public class CoProductExample {
     public void process2(List<CoProduct2<String, Integer, ?>> items) {
         for (CoProduct2<String, Integer, ?> item : items) {
             Integer value = item.match(String::length, integer -> integer);
+
             // .. do something with value
+            System.out.println(value);
         }
     }
 
