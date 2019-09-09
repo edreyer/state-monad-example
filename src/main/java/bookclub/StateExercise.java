@@ -1,31 +1,29 @@
 package bookclub;
 
 import java.util.Random;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.jnape.palatable.lambda.adt.hlist.Tuple2;
+import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functor.builtin.State;
 import io.vavr.Function1;
 import lombok.Value;
+
+import static com.jnape.palatable.lambda.adt.Maybe.just;
+import static com.jnape.palatable.lambda.adt.hlist.HList.tuple;
+import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
+import static com.jnape.palatable.lambda.functions.builtin.fn2.Both.both;
+import static com.jnape.palatable.lambda.functions.builtin.fn2.Take.take;
+import static com.jnape.palatable.lambda.functions.builtin.fn2.Unfoldr.unfoldr;
+import static com.jnape.palatable.lambda.functor.builtin.State.state;
 
 public class StateExercise {
 
     @Value
     public static class Seed{
         private int seed;
-    }
-
-    @Value
-    public static class StateTuple<S, A> {
-        private S state;
-        private A value;
-    }
-
-    // Build a functional random number generator using java.util.Random
-    // Hint: Pure functions: Same input => Same output
-    // (Seed) -> (Seed', Integer)
-    // Function<Seed, StateTuple<Seed, Integer>>
-    public static StateTuple<Seed, Integer> nextInt(Seed seed) {
-        Random r = new Random(seed.getSeed());
-        int i = r.nextInt();
-        return new StateTuple(new Seed(i), i);
     }
 
     public static StateTuple<Seed, Boolean> nextBoolean(Seed seed) {
@@ -93,10 +91,28 @@ public class StateExercise {
         }
     }
 
+    @Value
+    public static class StateTuple<S, A> {
+        private S state;
+        private A value;
+    }
+
+    // Build a functional random number generator using java.util.Random
+    // Hint: Pure functions: Same input => Same output
+    // (Seed) -> (Seed', Integer)
+    // Function<Seed, StateTuple<Seed, Integer>>
+    public static StateTuple<Seed, Integer> nextInt(Seed seed) {
+        Random r = new Random(seed.getSeed());
+        int i = r.nextInt();
+        return new StateTuple(new Seed(i), i);
+    }
+
+
     // function form: State -> (State', Value)
     // Function1<Seed, StateTuple<Seed, Boolean>>
 
-    public interface StateF<State, Value> extends Function1<State, StateTuple<State, Value>> {}
+    public interface StateF<State, Value> extends Function1<State, StateTuple<State, Value>> {
+    }
 
     public static class StateM<State, Value> {
 
@@ -110,24 +126,21 @@ public class StateExercise {
             /*
             return new StateM(op);
              */
-            // TODO
-            return null;
+            return new StateM(op);
         }
 
         public static <State, Value> StateM<State, Value> of(Value a) {
             /*
             return new StateM(state -> new StateTuple(state, a));
              */
-            // TODO
-            return null;
+            return new StateM((state) -> new StateTuple<>(state, a));
         }
 
         public Value eval(State s) {
             /*
             return op.apply(s).value;
              */
-            // TODO
-            return null;
+            return op.apply(s).value;
         }
 
         public <B> StateM<State, B> flatMap(Function1<Value, StateM<State, B>> f) {
@@ -139,43 +152,70 @@ public class StateExercise {
                 return result;
             });
              */
-            // TODO
-            return null;
+            return StateM.of((State state) -> {
+                StateTuple<State, Value> tempTuple = op.apply(state);
+                StateM<State, B> tempStateM = f.apply(tempTuple.value);
+                StateTuple<State, B> result = tempStateM.op.apply(tempTuple.state);
+                return result;
+            });
         }
 
         public <B> StateM<State, B> map(Function1<Value, B> f) {
             /*
             return flatMap(value -> StateM.of(f.apply(value)));
              */
-            // TODO: define in terms of flatMap
-            return null;
+            return flatMap((value) -> StateM.of(f.apply(value)));
         }
 
     }
 
     public static void main(String[] args) {
 
-        // Example usage
-        StateM<Seed, Integer> rndInt = StateM.of(StateExercise::nextInt);
+        /////////////////
+        // using 'lambda'
+        /////////////////
 
-        // generate a random vaue
-        System.out.println(
-            rndInt.eval(new Seed(0))
-        );
-
-        @Value
+        @Value // lombok
         class Point {
             private int x, y, z;
         }
 
+        @Value // lombok
+        class Seed{
+            private int seed;
+        }
 
-        StateM<Seed, Point> pointS = rndInt.flatMap(x ->
-            rndInt.flatMap(y ->
-                rndInt.map(z -> new Point(x, y, z))));
+        // function literal that generates new random integers (and seed')
+        Fn1<Seed, Tuple2<Integer, Seed>> rndIntF =
+            (Seed seed) -> {
+                Random r = new Random(seed.getSeed());
+                int i = r.nextInt();
+                return tuple(i, new Seed(i));
+            };
 
-        Point point = pointS.eval(new Seed(0));
-        System.out.println(point);
+        // random integer monad
+        State<Seed, Integer> rndIntS = state(rndIntF);
 
+        Fn1<Integer, Tuple2<Integer, Seed>> foo = both(id(), Seed::new);
+
+        // pointfree style
+        State<Seed, Integer> rndIntS2 = state(
+            both(id(), Seed::new).contraMap(s -> new Random(s.getSeed()).nextInt())
+        );
+
+        // random Point monad, created from random integer monad
+        State<Seed, Point> rndPointS = rndIntS2.flatMap(x ->
+            rndIntS2.flatMap(y ->
+                rndIntS2.fmap(z -> new Point(x, y, z))));
+
+        // generator for random Points.  Normally infinite, but I'm just taking 10
+        // Also, lazy eval -- nothing happens yet
+        Iterable<Point> points = take(10,
+            unfoldr(seed -> just(rndPointS.run(seed)), new Seed(0)));
+
+        // println() is a terminal function that causes evaluation of above
+        points.forEach(System.out::println);
     }
+
 
 }
