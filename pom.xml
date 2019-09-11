@@ -20,11 +20,10 @@
             <version>0.10.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.oath.cyclops/cyclops-pure -->
         <dependency>
-            <groupId>com.oath.cyclops</groupId>
-            <artifactId>cyclops-pure</artifactId>
-            <version>10.3.0</version>
+            <groupId>com.jnape.palatable</groupId>
+            <artifactId>lambda</artifactId>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
