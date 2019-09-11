@@ -199,14 +199,14 @@ public class StateExercise {
         Fn1<Integer, Tuple2<Integer, Seed>> foo = both(id(), Seed::new);
 
         // pointfree style
-        State<Seed, Integer> rndIntS2 = state(
-            both(id(), Seed::new).contraMap(s -> new Random(s.getSeed()).nextInt())
-        );
+//        State<Seed, Integer> rndIntS2 = state(
+//            both(id(), Seed::new).contraMap(s -> new Random(s.getSeed()).nextInt())
+//        );
 
         // random Point monad, created from random integer monad
-        State<Seed, Point> rndPointS = rndIntS2.flatMap(x ->
-            rndIntS2.flatMap(y ->
-                rndIntS2.fmap(z -> new Point(x, y, z))));
+        State<Seed, Point> rndPointS = rndIntS.flatMap(x ->
+            rndIntS.flatMap(y ->
+                rndIntS.fmap(z -> new Point(x, y, z))));
 
         // generator for random Points.  Normally infinite, but I'm just taking 10
         // Also, lazy eval -- nothing happens yet

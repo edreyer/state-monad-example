@@ -53,7 +53,7 @@ public class WTFJava {
         CompletableFuture<Float> flatMappedFuture = future
             .thenCompose(x -> x % 2 == 0
                 ? completedFuture(x / 2F)
-                : new CompletableFuture<>() {{
+                : new CompletableFuture() {{
                     completeExceptionally(new IllegalStateException("oops"));
                 }});
     }

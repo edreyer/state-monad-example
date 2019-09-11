@@ -2,7 +2,6 @@ package functional.monad;
 
 import java.util.function.Function;
 
-import cyclops.control.State;
 import io.vavr.Function1;
 import io.vavr.collection.List;
 
