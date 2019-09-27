@@ -15,15 +15,17 @@ public class IOExample {
 
         final Scanner scanner = new Scanner(System.in);
 
-        Fn0<IO<String>> getLine = () -> io(() -> scanner.nextLine());
-        Fn1<String, IO<Unit>> putStrLn = (String s) -> io(() -> System.out.println(s));
+        Fn0<IO<String>> getLine = () ->
+            io(() -> scanner.nextLine());
 
-        IO<Unit> ioWork = putStrLn.apply("First Name?").flatMap( unit ->
-            getLine.apply().flatMap( first ->
-            putStrLn.apply("Last Name?").flatMap( unit2 ->
-            getLine.apply().flatMap( last ->
-            putStrLn.apply("First: " + first + ", Last: " + last)))))
-        ;
+        Fn1<String, IO<Unit>> putStrLn = (String s) ->
+            io(() -> System.out.println(s));
+
+        IO<Unit> ioWork = putStrLn.apply("First Name?")
+            .flatMap( unit -> getLine.apply()
+            .flatMap( first -> putStrLn.apply("Last Name?")
+            .flatMap( unit2 -> getLine.apply()
+            .flatMap( last -> putStrLn.apply("First: " + first + ", Last: " + last)))));
 
         ioWork.unsafePerformIO();
     }

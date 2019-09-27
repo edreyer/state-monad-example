@@ -1,10 +1,13 @@
 package fpsimplified.transformers;
 
-import java.util.concurrent.CompletableFuture;
-
-import com.jnape.palatable.lambda.adt.Maybe;
 import io.vavr.concurrent.Future;
 import io.vavr.control.Option;
+
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.Patterns.$None;
+import static io.vavr.Patterns.$Some;
 
 public class MonadTransformerExample {
 
@@ -41,14 +44,16 @@ public class MonadTransformerExample {
 //        }
 
         // maybe this instead?
-//        Future<Option<Address>> findAddressByUserIdTake2(Long userId) {
-//            return findById(userId)
-//                // Expects a User, but given Option<User>
-//                .flatMap(userOp -> userOp
-//                    .map(this::findAddressByUser)
-//                    .orElse(() -> Future.successful(Option.<Address>none()))
-//                );
-//        }
+        // Better, but arguably ugly.
+        // What we really want is a sort of double flatMap
+        Future<Option<Address>> findAddressByUserIdTake2(Long userId) {
+            return findById(userId)
+                // Expects a User, but given Option<User>
+                .flatMap(userOp -> Match(userOp).of(
+                    Case($Some($()), user -> findAddressByUser(user)),
+                    Case($None(), Future.successful(Option.none()))
+                ));
+        }
 
     }
 }

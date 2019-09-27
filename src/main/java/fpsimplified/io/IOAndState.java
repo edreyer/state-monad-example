@@ -1,4 +1,4 @@
-package fpsimplified.io;
+package fpsimplified.IO;
 
 import java.util.Scanner;
 
@@ -30,6 +30,13 @@ public class IOAndState {
 
     // -------------------------------------------------
     // Updated methods normalized on StateT API
+
+    // wraps an IO<A> in a StateT
+    static <A> StateT<SumState, IO<?>, A> liftIoIntoState(IO<A> io) {
+        return StateT.stateT(
+            (SumState s) -> io.fmap(a -> tuple(a, s))
+        );
+    }
 
     static StateT<SumState, IO<?>, String> getLineAsStatetT() {
         return liftIoIntoState(getLine());
@@ -75,13 +82,6 @@ public class IOAndState {
         return sumStateFn1IOStateT;
     }
 
-    // wraps an IO<A> in a StateT
-    static <A> StateT<SumState, IO<?>, A> liftIoIntoState(IO<A> io) {
-        return StateT.stateT(
-            (SumState s) -> io.fmap(a -> tuple(a, s))
-        );
-    }
-
     // UH OH!  Incompatible Typles.  Need a Monad Transformer (StateT) to help
     // This breaks because of incompatible APIS -- methods given IO when expecting StateT
 //    static StateT<SumState, IO<?>, Unit> sumLoop() {
@@ -94,11 +94,12 @@ public class IOAndState {
 
     static StateT<SumState, IO<?>, Unit> sumLoopUsingStateT() {
         return putStrAsStateT("\nGive me an int: ").flatMap(_1 ->
-        getLineAsStatetT().flatMap(input -> (input.equals("q"))
-            ? liftIoIntoState(IO.io(UNIT))
-            : liftIoIntoState(io(() -> toInt(input))).flatMap(i ->
-                updateAppState(i).flatMap(_2 ->
-                sumLoopUsingStateT()))));
+            getLineAsStatetT().flatMap(input ->
+                (input.equals("q"))
+                ? liftIoIntoState(IO.io(UNIT))
+                : liftIoIntoState(io(() -> toInt(input))).flatMap(i ->
+                    updateAppState(i).flatMap(_2 ->
+                    sumLoopUsingStateT()))));
     }
 
     public static void main(String[] args) {

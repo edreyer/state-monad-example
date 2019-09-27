@@ -196,9 +196,8 @@ public class StateExercise {
         // random integer monad
         State<Seed, Integer> rndIntS = state(rndIntF);
 
-        Fn1<Integer, Tuple2<Integer, Seed>> foo = both(id(), Seed::new);
-
         // pointfree style
+//        Fn1<Integer, Tuple2<Integer, Seed>> foo = both(id(), Seed::new);
 //        State<Seed, Integer> rndIntS2 = state(
 //            both(id(), Seed::new).contraMap(s -> new Random(s.getSeed()).nextInt())
 //        );
