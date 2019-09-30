@@ -1,11 +1,11 @@
 package functional.monad;
 
-import java.util.Objects;
-
 import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Function3;
 import io.vavr.collection.Traversable;
+
+import java.util.Objects;
 
 import static io.vavr.API.Seq;
 
@@ -74,7 +74,7 @@ public class StateAPI {
          * @param <R> type of the resulting {@code StateM} elements
          * @return an {@code StateM} of mapped results
          */
-        public <R> StateM<S1, R> yield(Function1<T1, R> f) {
+        public <R> StateM<S1, R> yieldResult(Function1<T1, R> f) {
             Objects.requireNonNull(f, "f is null");
             return ts1.map(f);
         }
@@ -84,8 +84,8 @@ public class StateAPI {
          *
          * @return an {@code Iterator} of mapped results
          */
-        public StateM<S1, T1> yield() {
-            return yield(Function1.identity());
+        public StateM<S1, T1> yieldResult() {
+            return yieldResult(Function1.identity());
         }
     }
 

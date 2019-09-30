@@ -9,9 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>11</java.version>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.source>11</maven.compiler.source>
+        <java.version>13</java.version>
     </properties>
 
     <dependencies>
@@ -81,8 +79,12 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
+<!--                    <source>${java.version}</source>-->
+<!--                    <target>${java.version}</target>-->
+                    <compilerArgs>
+                        --enable-preview
+                    </compilerArgs>
                 </configuration>
                 <executions>
                     <execution>
