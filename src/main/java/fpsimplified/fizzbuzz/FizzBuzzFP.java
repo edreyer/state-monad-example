@@ -47,32 +47,32 @@ public class FizzBuzzFP {
                 ? new Carbonated(label)
                 : new Uncarbonated(n);
 
-    static Fn4<
-        Fn3<Integer, String, Integer, FizzBuzz>,
-        Integer,
-        String,
-        FizzBuzz,
-        FizzBuzz> ifUncarbonatedDoFn =
-        (fn, divisor, label, fbv) -> switch (fbv.getClass().getSimpleName()) {
-            case "Carbonated" -> fbv;
-            case "Uncarbonated" -> fn.apply(divisor, label, (Integer)fbv.getVal());
-            default -> throw new IllegalStateException();
-        };
+//    static Fn4<
+//        Fn3<Integer, String, Integer, FizzBuzz>,
+//        Integer,
+//        String,
+//        FizzBuzz,
+//        FizzBuzz> ifUncarbonatedDoFn =
+//        (fn, divisor, label, fbv) -> switch (fbv.getClass().getSimpleName()) {
+//            case "Carbonated" -> fbv;
+//            case "Uncarbonated" -> fn.apply(divisor, label, (Integer)fbv.getVal());
+//            default -> throw new IllegalStateException();
+//        };
+//
+//    static Fn1<Integer, String> fizzBuzzFn = (n) ->
+//        Maybe.just(n)
+//            .fmap(num -> carbonateFn.apply(15, "FizzBuzz", num))
+//            .fmap(fbv -> ifUncarbonatedDoFn.apply(carbonateFn, 3, "Fizz", fbv))
+//            .fmap(fbv -> ifUncarbonatedDoFn.apply(carbonateFn, 5, "Buzz", fbv))
+//            .fmap(fbv -> fbv.toString())
+//            .orElseThrow(() -> new RuntimeException());
 
-    static Fn1<Integer, String> fizzBuzzFn = (n) ->
-        Maybe.just(n)
-            .fmap(num -> carbonateFn.apply(15, "FizzBuzz", num))
-            .fmap(fbv -> ifUncarbonatedDoFn.apply(carbonateFn, 3, "Fizz", fbv))
-            .fmap(fbv -> ifUncarbonatedDoFn.apply(carbonateFn, 5, "Buzz", fbv))
-            .fmap(fbv -> fbv.toString())
-            .orElseThrow(() -> new RuntimeException());
-
-    public static void main(String[] args) {
-        Iterable<String> fizzBuzz100 = map(fizzBuzzFn,
-            take(100,
-                iterate(n -> n + 1, 1))
-        );
-
-        fizzBuzz100.forEach(System.out::println);
-    }
+//    public static void main(String[] args) {
+//        Iterable<String> fizzBuzz100 = map(fizzBuzzFn,
+//            take(100,
+//                iterate(n -> n + 1, 1))
+//        );
+//
+//        fizzBuzz100.forEach(System.out::println);
+//    }
 }

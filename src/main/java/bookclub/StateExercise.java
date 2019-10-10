@@ -197,9 +197,11 @@ public class StateExercise {
         State<Seed, Integer> rndIntS = state(rndIntF);
 
         // pointfree style
-//        Fn1<Integer, Tuple2<Integer, Seed>> foo = both(id(), Seed::new);
 //        State<Seed, Integer> rndIntS2 = state(
-//            both(id(), Seed::new).contraMap(s -> new Random(s.getSeed()).nextInt())
+//            both(id(), Seed::new)
+//                .contraMap(s ->
+//                    new Random(s.getSeed()).nextInt()
+//                )
 //        );
 
         // random Point monad, created from random integer monad
